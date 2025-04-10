@@ -1,0 +1,21 @@
+# Visual Studio settings
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+
+# ASP.NET temporary files
+**/App_Data/
+**/App_Start/
+
+# Logs
+*.log
+
+# Others
+.env
+*.db
