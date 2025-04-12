@@ -1,33 +1,39 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PropertyGalla.Data;
-using PropertyGalla.Services; // ✅ Include the service namespace
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Add services to the container.
-builder.Services.AddControllersWithViews();
+// ✅ Add Controllers with JSON Options to prevent reference loops
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true; // optional, for readable JSON
+    });
 
-// ✅ Register the database context with connection string from appsettings.json
+// ✅ CORS Setup
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddDbContext<PropertyGallaContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ✅ Register the IdGeneratorService for dependency injection
-builder.Services.AddScoped<IdGeneratorService>();
-
 var app = builder.Build();
 
-// ✅ Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
+// ✅ Use CORS
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -36,6 +36,7 @@ namespace PropertyGalla.Services
                         nextNumber = ExtractNumber(lastProperty.PropertyId, prefix) + 1;
                     break;
 
+
                 case "viewrequests":
                     var lastRequest = await _context.ViewRequests.OrderByDescending(r => r.RequestId).FirstOrDefaultAsync();
                     if (lastRequest != null)

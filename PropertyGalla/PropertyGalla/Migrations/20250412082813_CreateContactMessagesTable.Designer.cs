@@ -12,7 +12,7 @@ using PropertyGalla.Data;
 namespace PropertyGalla.Migrations
 {
     [DbContext(typeof(PropertyGallaContext))]
-    [Migration("20250412021731_CreateContactMessagesTable")]
+    [Migration("20250412082813_CreateContactMessagesTable")]
     partial class CreateContactMessagesTable
     {
         /// <inheritdoc />
@@ -100,10 +100,6 @@ namespace PropertyGalla.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -251,31 +247,6 @@ namespace PropertyGalla.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("PropertyGalla.Models.UserCart", b =>
-                {
-                    b.Property<string>("CartId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PropertyId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("CartId");
-
-                    b.HasIndex("PropertyId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserCarts");
-                });
-
             modelBuilder.Entity("PropertyGalla.Models.ViewRequest", b =>
                 {
                     b.Property<string>("RequestId")
@@ -407,25 +378,6 @@ namespace PropertyGalla.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PropertyGalla.Models.UserCart", b =>
-                {
-                    b.HasOne("PropertyGalla.Models.Property", "Property")
-                        .WithMany()
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PropertyGalla.Models.User", "User")
-                        .WithMany("UserCarts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Property");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("PropertyGalla.Models.ViewRequest", b =>
                 {
                     b.HasOne("PropertyGalla.Models.Property", "Property")
@@ -465,8 +417,6 @@ namespace PropertyGalla.Migrations
                     b.Navigation("SentMessages");
 
                     b.Navigation("SubmittedReports");
-
-                    b.Navigation("UserCarts");
 
                     b.Navigation("ViewRequests");
                 });

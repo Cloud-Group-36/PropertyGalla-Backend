@@ -5,7 +5,7 @@
 namespace PropertyGalla.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPropertyTable : Migration
+    public partial class RemoveImageUrlProperly : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
