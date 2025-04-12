@@ -22,6 +22,7 @@ namespace PropertyGalla.Services
 
             int nextNumber = 1;
 
+            // Start by finding the current highest number (optional optimization)
             switch (tableName.ToLower())
             {
                 case "users":
@@ -35,7 +36,6 @@ namespace PropertyGalla.Services
                     if (lastProperty != null)
                         nextNumber = ExtractNumber(lastProperty.PropertyId, prefix) + 1;
                     break;
-
 
                 case "viewrequests":
                     var lastRequest = await _context.ViewRequests.OrderByDescending(r => r.RequestId).FirstOrDefaultAsync();
@@ -65,8 +65,36 @@ namespace PropertyGalla.Services
                     throw new ArgumentException("Unknown table");
             }
 
-            return $"{prefix}{nextNumber.ToString("D4")}";
+            string generatedId = $"{prefix}{nextNumber:D4}";
+            bool exists;
+
+            do
+            {
+                exists = await IdExistsAsync(tableName, generatedId);
+                if (exists)
+                {
+                    nextNumber++;
+                    generatedId = $"{prefix}{nextNumber:D4}";
+                }
+            } while (exists);
+
+            return generatedId;
         }
+
+        private async Task<bool> IdExistsAsync(string tableName, string id)
+        {
+            return tableName.ToLower() switch
+            {
+                "users" => await _context.Users.AnyAsync(u => u.UserId == id),
+                "properties" => await _context.Properties.AnyAsync(p => p.PropertyId == id),
+                "viewrequests" => await _context.ViewRequests.AnyAsync(r => r.RequestId == id),
+                "contactmessages" => await _context.ContactMessages.AnyAsync(m => m.MessageId == id),
+                "feedback" => await _context.Feedbacks.AnyAsync(f => f.FeedbackId == id),
+                "reports" => await _context.Reports.AnyAsync(r => r.ReportId == id),
+                _ => throw new ArgumentException("Unknown table")
+            };
+        }
+
 
         private string GetPrefix(string tableName)
         {
