@@ -27,8 +27,6 @@ namespace PropertyGalla.Models
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
 
-        [Required]
-        public string ImageUrl { get; set; }
 
         public string Status { get; set; } = "available";
 
