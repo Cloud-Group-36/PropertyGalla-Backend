@@ -1,4 +1,4 @@
-﻿namespace PropertyGalla.Models
+﻿namespace PropertyGalla.DTOs.ProprtyDTOs
 {
     public class CreatePropertyDto
     {

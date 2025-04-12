@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PropertyGalla.Data;
-using PropertyGalla.DTOs;
+using PropertyGalla.DTOs.ProprtyDTOs;
 using PropertyGalla.Models;
 using PropertyGalla.Services;
 
@@ -34,8 +34,8 @@ namespace PropertyGalla.Controllers
             [FromQuery] decimal? maxPrice = null,
             [FromQuery] DateTime? startDate = null,
             [FromQuery] DateTime? endDate = null,
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int? page = null,
+            [FromQuery] int? pageSize = null)
         {
             var query = _context.Properties
                 .Include(p => p.Images)
@@ -59,10 +59,14 @@ namespace PropertyGalla.Controllers
             if (endDate.HasValue)
                 query = query.Where(p => p.CreatedAt <= endDate);
 
-            var properties = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            if (page.HasValue && pageSize.HasValue)
+            {
+                query = query
+                    .Skip((page.Value - 1) * pageSize.Value)
+                    .Take(pageSize.Value);
+            }
+
+            var properties = await query.ToListAsync();
 
             return properties.Select(p => new GetPropertyDto
             {
@@ -76,6 +80,7 @@ namespace PropertyGalla.Controllers
                 Images = p.Images.Select(i => i.ImageUrl).ToList()
             }).ToList();
         }
+
 
 
         [HttpGet("{id}")]
