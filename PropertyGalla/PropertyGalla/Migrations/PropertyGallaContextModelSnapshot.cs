@@ -146,6 +146,9 @@ namespace PropertyGalla.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PropertyId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");

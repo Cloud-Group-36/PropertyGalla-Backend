@@ -20,6 +20,8 @@ namespace PropertyGalla.Models
 
         public string Status { get; set; } = "pending";  // pending, reviewed, dismissed
 
+        public string? Note { get; set; }  
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("ReporterId")]
@@ -27,8 +29,5 @@ namespace PropertyGalla.Models
 
         [ForeignKey("PropertyId")]
         public Property Property { get; set; }
-
-
-
     }
 }
