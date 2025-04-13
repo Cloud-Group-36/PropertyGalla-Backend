@@ -107,10 +107,15 @@ namespace PropertyGalla.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public async Task<ActionResult<Property>> PostProperty(CreatePropertyDto dto)
         {
             try
             {
+                var ownerExists = await _context.Users.AnyAsync(u => u.UserId == dto.OwnerId);
+                if (!ownerExists)
+                    return BadRequest(new { message = "OwnerId does not exist in Users table" });
+
                 var propertyId = await _idGenerator.GenerateIdAsync("properties");
 
                 var property = new Property
@@ -147,9 +152,6 @@ namespace PropertyGalla.Controllers
             catch (DbUpdateException dbEx)
             {
                 var innerMessage = dbEx.InnerException?.Message ?? "No inner exception";
-                Console.WriteLine($"❌ DbUpdateException: {dbEx.Message}");
-                Console.WriteLine($"🔎 Inner: {innerMessage}");
-
                 return StatusCode(500, new
                 {
                     message = "Database update error",
@@ -159,9 +161,6 @@ namespace PropertyGalla.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ General Exception: {ex.Message}");
-                Console.WriteLine($"🔎 StackTrace: {ex.StackTrace}");
-
                 return StatusCode(500, new
                 {
                     message = "Unexpected server error",
@@ -170,6 +169,7 @@ namespace PropertyGalla.Controllers
                 });
             }
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProperty(string id, UpdatePropertyDto dto)
