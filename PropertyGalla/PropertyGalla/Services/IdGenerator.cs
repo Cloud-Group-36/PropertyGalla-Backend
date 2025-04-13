@@ -38,9 +38,9 @@ namespace PropertyGalla.Services
                     break;
 
                 case "viewrequests":
-                    var lastRequest = await _context.ViewRequests.OrderByDescending(r => r.RequestId).FirstOrDefaultAsync();
+                    var lastRequest = await _context.ViewRequests.OrderByDescending(r => r.ViewRequestId).FirstOrDefaultAsync();
                     if (lastRequest != null)
-                        nextNumber = ExtractNumber(lastRequest.RequestId, prefix) + 1;
+                        nextNumber = ExtractNumber(lastRequest.ViewRequestId, prefix) + 1;
                     break;
 
                 case "contactmessages":
@@ -87,7 +87,7 @@ namespace PropertyGalla.Services
             {
                 "users" => await _context.Users.AnyAsync(u => u.UserId == id),
                 "properties" => await _context.Properties.AnyAsync(p => p.PropertyId == id),
-                "viewrequests" => await _context.ViewRequests.AnyAsync(r => r.RequestId == id),
+                "viewrequests" => await _context.ViewRequests.AnyAsync(r => r.ViewRequestId == id),
                 "contactmessages" => await _context.ContactMessages.AnyAsync(m => m.MessageId == id),
                 "feedback" => await _context.Feedbacks.AnyAsync(f => f.FeedbackId == id),
                 "reports" => await _context.Reports.AnyAsync(r => r.ReportId == id),

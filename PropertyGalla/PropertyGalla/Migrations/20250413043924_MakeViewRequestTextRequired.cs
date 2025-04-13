@@ -5,7 +5,7 @@
 namespace PropertyGalla.Migrations
 {
     /// <inheritdoc />
-    public partial class RemoveImageUrlProperly : Migration
+    public partial class MakeViewRequestTextRequired : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

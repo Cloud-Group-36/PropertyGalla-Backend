@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PropertyGalla.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -66,7 +66,6 @@ namespace PropertyGalla.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -191,43 +190,19 @@ namespace PropertyGalla.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserCarts",
-                columns: table => new
-                {
-                    CartId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PropertyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserCarts", x => x.CartId);
-                    table.ForeignKey(
-                        name: "FK_UserCarts_Properties_PropertyId",
-                        column: x => x.PropertyId,
-                        principalTable: "Properties",
-                        principalColumn: "PropertyId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserCarts_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ViewRequests",
                 columns: table => new
                 {
-                    RequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ViewRequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PropertyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RequestedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ViewRequests", x => x.RequestId);
+                    table.PrimaryKey("PK_ViewRequests", x => x.ViewRequestId);
                     table.ForeignKey(
                         name: "FK_ViewRequests_Properties_PropertyId",
                         column: x => x.PropertyId,
@@ -298,16 +273,6 @@ namespace PropertyGalla.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCarts_PropertyId",
-                table: "UserCarts",
-                column: "PropertyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserCarts_UserId",
-                table: "UserCarts",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ViewRequests_PropertyId",
                 table: "ViewRequests",
                 column: "PropertyId");
@@ -335,9 +300,6 @@ namespace PropertyGalla.Migrations
 
             migrationBuilder.DropTable(
                 name: "SavedProperties");
-
-            migrationBuilder.DropTable(
-                name: "UserCarts");
 
             migrationBuilder.DropTable(
                 name: "ViewRequests");
