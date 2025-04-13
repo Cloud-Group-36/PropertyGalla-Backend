@@ -12,8 +12,8 @@ using PropertyGalla.Data;
 namespace PropertyGalla.Migrations
 {
     [DbContext(typeof(PropertyGallaContext))]
-    [Migration("20250413185008_InitialSchemaWithUpdatedProperty")]
-    partial class InitialSchemaWithUpdatedProperty
+    [Migration("20250413232210_InitialSchema")]
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,6 +148,9 @@ namespace PropertyGalla.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PropertyId")
                         .IsRequired()
