@@ -7,21 +7,25 @@ namespace PropertyGalla.Models
     public class ViewRequest
     {
         [Key]
-        public string RequestId { get; set; }
+        public string ViewRequestId { get; set; }
 
         [Required]
-        public string UserId { get; set; }  // FK → Users.UserId
+        public string UserId { get; set; }
 
         [Required]
-        public string PropertyId { get; set; }  // FK → Properties.PropertyId
+        public string PropertyId { get; set; }
 
-        public DateTime RequestedAt { get; set; } = DateTime.Now;
+        [Required]
+        public string Text { get; set; }
+
+        public string Status { get; set; } = "pending"; // ✅ Default status
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("UserId")]
         public User User { get; set; }
 
         [ForeignKey("PropertyId")]
         public Property Property { get; set; }
-
     }
 }

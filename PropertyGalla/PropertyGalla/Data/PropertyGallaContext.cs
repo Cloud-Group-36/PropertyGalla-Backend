@@ -15,6 +15,7 @@ namespace PropertyGalla.Data
         public DbSet<Property> Properties { get; set; }
         public DbSet<PropertyImage> PropertyImages { get; set; }
         public DbSet<ViewRequest> ViewRequests { get; set; }
+
         public DbSet<ContactMessage> ContactMessages { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Report> Reports { get; set; }

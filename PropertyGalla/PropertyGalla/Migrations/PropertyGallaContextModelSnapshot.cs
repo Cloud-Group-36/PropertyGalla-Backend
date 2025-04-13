@@ -246,21 +246,29 @@ namespace PropertyGalla.Migrations
 
             modelBuilder.Entity("PropertyGalla.Models.ViewRequest", b =>
                 {
-                    b.Property<string>("RequestId")
+                    b.Property<string>("ViewRequestId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PropertyId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("RequestedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("RequestId");
+                    b.HasKey("ViewRequestId");
 
                     b.HasIndex("PropertyId");
 
