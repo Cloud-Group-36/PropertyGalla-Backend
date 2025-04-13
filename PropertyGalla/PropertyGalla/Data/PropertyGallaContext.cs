@@ -85,6 +85,12 @@ namespace PropertyGalla.Data
                 .HasForeignKey(f => f.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // ✅ Enforce unique (ReviewerId, OwnerId) to prevent duplicate feedback
+            modelBuilder.Entity<Feedback>()
+                .HasIndex(f => new { f.ReviewerId, f.OwnerId })
+                .IsUnique();
+
+
             // Report → Reporter & Property
             modelBuilder.Entity<Report>()
                 .HasOne(r => r.Reporter)

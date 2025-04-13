@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PropertyGalla.Data;
@@ -22,63 +23,55 @@ namespace PropertyGalla.Services
 
             int nextNumber = 1;
 
-            // Start by finding the current highest number (optional optimization)
             switch (tableName.ToLower())
             {
                 case "users":
-                    var lastUser = await _context.Users.OrderByDescending(u => u.UserId).FirstOrDefaultAsync();
-                    if (lastUser != null)
-                        nextNumber = ExtractNumber(lastUser.UserId, prefix) + 1;
+                    nextNumber = await GetNextNumber(_context.Users.OrderByDescending(u => u.UserId), prefix);
                     break;
-
                 case "properties":
-                    var lastProperty = await _context.Properties.OrderByDescending(p => p.PropertyId).FirstOrDefaultAsync();
-                    if (lastProperty != null)
-                        nextNumber = ExtractNumber(lastProperty.PropertyId, prefix) + 1;
+                    nextNumber = await GetNextNumber(_context.Properties.OrderByDescending(p => p.PropertyId), prefix);
                     break;
-
                 case "viewrequests":
-                    var lastRequest = await _context.ViewRequests.OrderByDescending(r => r.ViewRequestId).FirstOrDefaultAsync();
-                    if (lastRequest != null)
-                        nextNumber = ExtractNumber(lastRequest.ViewRequestId, prefix) + 1;
+                    nextNumber = await GetNextNumber(_context.ViewRequests.OrderByDescending(r => r.ViewRequestId), prefix);
                     break;
-
                 case "contactmessages":
-                    var lastMessage = await _context.ContactMessages.OrderByDescending(m => m.MessageId).FirstOrDefaultAsync();
-                    if (lastMessage != null)
-                        nextNumber = ExtractNumber(lastMessage.MessageId, prefix) + 1;
+                    nextNumber = await GetNextNumber(_context.ContactMessages.OrderByDescending(m => m.MessageId), prefix);
                     break;
-
                 case "feedback":
-                    var lastFeedback = await _context.Feedbacks.OrderByDescending(f => f.FeedbackId).FirstOrDefaultAsync();
-                    if (lastFeedback != null)
-                        nextNumber = ExtractNumber(lastFeedback.FeedbackId, prefix) + 1;
+                    nextNumber = await GetNextNumber(_context.Feedbacks.OrderByDescending(f => f.FeedbackId), prefix);
                     break;
-
                 case "reports":
-                    var lastReport = await _context.Reports.OrderByDescending(r => r.ReportId).FirstOrDefaultAsync();
-                    if (lastReport != null)
-                        nextNumber = ExtractNumber(lastReport.ReportId, prefix) + 1;
+                    nextNumber = await GetNextNumber(_context.Reports.OrderByDescending(r => r.ReportId), prefix);
                     break;
-
                 default:
                     throw new ArgumentException("Unknown table");
             }
 
-            string generatedId = $"{prefix}{nextNumber:D4}";
-            bool exists;
+            // ✅ Your requested format: PREFIX + "000" + number
+            string generatedId = $"{prefix}000{nextNumber}";
 
-            do
+            // Ensure uniqueness
+            while (await IdExistsAsync(tableName, generatedId))
             {
-                exists = await IdExistsAsync(tableName, generatedId);
-                if (exists)
-                {
-                    nextNumber++;
-                    generatedId = $"{prefix}{nextNumber:D4}";
-                }
-            } while (exists);
+                nextNumber++;
+                generatedId = $"{prefix}000{nextNumber}";
+            }
 
             return generatedId;
+        }
+
+        private async Task<int> GetNextNumber<T>(IQueryable<T> orderedQuery, string prefix)
+        {
+            var idProp = typeof(T).GetProperties().FirstOrDefault(p => p.Name.EndsWith("Id"));
+            if (idProp == null) return 1;
+
+            var lastEntity = await orderedQuery.FirstOrDefaultAsync();
+            if (lastEntity != null)
+            {
+                var idValue = idProp.GetValue(lastEntity)?.ToString();
+                return ExtractNumber(idValue, prefix) + 1;
+            }
+            return 1;
         }
 
         private async Task<bool> IdExistsAsync(string tableName, string id)
@@ -94,7 +87,6 @@ namespace PropertyGalla.Services
                 _ => throw new ArgumentException("Unknown table")
             };
         }
-
 
         private string GetPrefix(string tableName)
         {
@@ -113,9 +105,9 @@ namespace PropertyGalla.Services
 
         private int ExtractNumber(string id, string prefix)
         {
-            if (id.StartsWith(prefix))
+            if (!string.IsNullOrEmpty(id) && id.StartsWith(prefix + "000"))
             {
-                var numberPart = id.Substring(prefix.Length);
+                string numberPart = id.Substring((prefix + "000").Length);
                 return int.TryParse(numberPart, out int num) ? num : 0;
             }
             return 0;
