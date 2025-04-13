@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PropertyGalla.Migrations
 {
     /// <inheritdoc />
-    public partial class InitSchema : Migration
+    public partial class InitialSchemaWithUpdatedProperty : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,7 +64,13 @@ namespace PropertyGalla.Migrations
                     OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rooms = table.Column<int>(type: "int", nullable: false),
+                    Bathrooms = table.Column<int>(type: "int", nullable: false),
+                    Parking = table.Column<int>(type: "int", nullable: false),
+                    Area = table.Column<double>(type: "float", nullable: false),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Neighborhood = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -76,40 +82,6 @@ namespace PropertyGalla.Migrations
                     table.ForeignKey(
                         name: "FK_Properties_Users_OwnerId",
                         column: x => x.OwnerId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ContactMessages",
-                columns: table => new
-                {
-                    MessageId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PropertyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContactMessages", x => x.MessageId);
-                    table.ForeignKey(
-                        name: "FK_ContactMessages_Properties_PropertyId",
-                        column: x => x.PropertyId,
-                        principalTable: "Properties",
-                        principalColumn: "PropertyId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ContactMessages_Users_ReceiverId",
-                        column: x => x.ReceiverId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ContactMessages_Users_SenderId",
-                        column: x => x.SenderId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
@@ -218,29 +190,15 @@ namespace PropertyGalla.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContactMessages_PropertyId",
-                table: "ContactMessages",
-                column: "PropertyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactMessages_ReceiverId",
-                table: "ContactMessages",
-                column: "ReceiverId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactMessages_SenderId",
-                table: "ContactMessages",
-                column: "SenderId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Feedbacks_OwnerId",
                 table: "Feedbacks",
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Feedbacks_ReviewerId",
+                name: "IX_Feedbacks_ReviewerId_OwnerId",
                 table: "Feedbacks",
-                column: "ReviewerId");
+                columns: new[] { "ReviewerId", "OwnerId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Properties_OwnerId",
@@ -286,9 +244,6 @@ namespace PropertyGalla.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ContactMessages");
-
             migrationBuilder.DropTable(
                 name: "Feedbacks");
 

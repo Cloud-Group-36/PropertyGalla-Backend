@@ -12,8 +12,8 @@ using PropertyGalla.Data;
 namespace PropertyGalla.Migrations
 {
     [DbContext(typeof(PropertyGallaContext))]
-    [Migration("20250413160735_AddUniqueIndexToFeedback")]
-    partial class AddUniqueIndexToFeedback
+    [Migration("20250413185008_InitialSchemaWithUpdatedProperty")]
+    partial class InitialSchemaWithUpdatedProperty
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,41 +24,6 @@ namespace PropertyGalla.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("PropertyGalla.Models.ContactMessage", b =>
-                {
-                    b.Property<string>("MessageId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PropertyId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("MessageId");
-
-                    b.HasIndex("PropertyId");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("ContactMessages");
-                });
 
             modelBuilder.Entity("PropertyGalla.Models.Feedback", b =>
                 {
@@ -97,6 +62,16 @@ namespace PropertyGalla.Migrations
                     b.Property<string>("PropertyId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<double>("Area")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Bathrooms")
+                        .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -104,7 +79,7 @@ namespace PropertyGalla.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Location")
+                    b.Property<string>("Neighborhood")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -112,8 +87,18 @@ namespace PropertyGalla.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("Parking")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("Rooms")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -281,33 +266,6 @@ namespace PropertyGalla.Migrations
                     b.ToTable("ViewRequests");
                 });
 
-            modelBuilder.Entity("PropertyGalla.Models.ContactMessage", b =>
-                {
-                    b.HasOne("PropertyGalla.Models.Property", "Property")
-                        .WithMany()
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PropertyGalla.Models.User", "Receiver")
-                        .WithMany("ReceivedMessages")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PropertyGalla.Models.User", "Sender")
-                        .WithMany("SentMessages")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Property");
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
-                });
-
             modelBuilder.Entity("PropertyGalla.Models.Feedback", b =>
                 {
                     b.HasOne("PropertyGalla.Models.User", "Owner")
@@ -419,11 +377,7 @@ namespace PropertyGalla.Migrations
 
                     b.Navigation("ReceivedFeedbacks");
 
-                    b.Navigation("ReceivedMessages");
-
                     b.Navigation("SavedProperties");
-
-                    b.Navigation("SentMessages");
 
                     b.Navigation("SubmittedReports");
 

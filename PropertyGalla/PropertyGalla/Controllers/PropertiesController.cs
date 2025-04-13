@@ -24,12 +24,17 @@ namespace PropertyGalla.Controllers
             _idGenerator = new IdGeneratorService(context);
         }
 
-        // ✅ GET: api/Properties with pagination + filtering
-        // ✅ GET: api/Properties with filtering by title, location, price range, and date range
+        // GET /api/Properties?state=Selangor&rooms=3&minPrice=1000&maxArea=1200
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetPropertyDto>>> GetProperties(
             [FromQuery] string? title = null,
-            [FromQuery] string? location = null,
+            [FromQuery] string? state = null,
+            [FromQuery] string? city = null,
+            [FromQuery] int? rooms = null,
+            [FromQuery] int? bathrooms = null,
+            [FromQuery] int? parking = null,
+            [FromQuery] double? minArea = null,
+            [FromQuery] double? maxArea = null,
             [FromQuery] decimal? minPrice = null,
             [FromQuery] decimal? maxPrice = null,
             [FromQuery] DateTime? startDate = null,
@@ -44,8 +49,26 @@ namespace PropertyGalla.Controllers
             if (!string.IsNullOrEmpty(title))
                 query = query.Where(p => p.Title.Contains(title));
 
-            if (!string.IsNullOrEmpty(location))
-                query = query.Where(p => p.Location.Contains(location));
+            if (!string.IsNullOrEmpty(state))
+                query = query.Where(p => p.State.Contains(state));
+
+            if (!string.IsNullOrEmpty(city))
+                query = query.Where(p => p.City.Contains(city));
+
+            if (rooms.HasValue)
+                query = query.Where(p => p.Rooms == rooms);
+
+            if (bathrooms.HasValue)
+                query = query.Where(p => p.Bathrooms == bathrooms);
+
+            if (parking.HasValue)
+                query = query.Where(p => p.Parking == parking);
+
+            if (minArea.HasValue)
+                query = query.Where(p => p.Area >= minArea);
+
+            if (maxArea.HasValue)
+                query = query.Where(p => p.Area <= maxArea);
 
             if (minPrice.HasValue)
                 query = query.Where(p => p.Price >= minPrice);
@@ -73,7 +96,13 @@ namespace PropertyGalla.Controllers
                 PropertyId = p.PropertyId,
                 Title = p.Title,
                 Description = p.Description,
-                Location = p.Location,
+                Rooms = p.Rooms,
+                Bathrooms = p.Bathrooms,
+                Parking = p.Parking,
+                Area = p.Area,
+                State = p.State,
+                City = p.City,
+                Neighborhood = p.Neighborhood,
                 Price = p.Price,
                 OwnerId = p.OwnerId,
                 Status = p.Status,
@@ -98,7 +127,13 @@ namespace PropertyGalla.Controllers
                 PropertyId = property.PropertyId,
                 Title = property.Title,
                 Description = property.Description,
-                Location = property.Location,
+                Rooms = property.Rooms,
+                Bathrooms = property.Bathrooms,
+                Parking = property.Parking,
+                Area = property.Area,
+                State = property.State,
+                City = property.City,
+                Neighborhood = property.Neighborhood,
                 Price = property.Price,
                 OwnerId = property.OwnerId,
                 Status = property.Status,
@@ -106,68 +141,53 @@ namespace PropertyGalla.Controllers
             };
         }
 
-        [HttpPost]
+
+
         [HttpPost]
         public async Task<ActionResult<Property>> PostProperty(CreatePropertyDto dto)
         {
-            try
+            var ownerExists = await _context.Users.AnyAsync(u => u.UserId == dto.OwnerId);
+            if (!ownerExists)
+                return BadRequest(new { message = "OwnerId does not exist in Users table" });
+
+            var propertyId = await _idGenerator.GenerateIdAsync("properties");
+
+            var property = new Property
             {
-                var ownerExists = await _context.Users.AnyAsync(u => u.UserId == dto.OwnerId);
-                if (!ownerExists)
-                    return BadRequest(new { message = "OwnerId does not exist in Users table" });
+                PropertyId = propertyId,
+                Title = dto.Title,
+                Description = dto.Description,
+                Rooms = dto.Rooms,
+                Bathrooms = dto.Bathrooms,
+                Parking = dto.Parking,
+                Area = dto.Area,
+                State = dto.State,
+                City = dto.City,
+                Neighborhood = dto.Neighborhood,
+                Price = dto.Price,
+                OwnerId = dto.OwnerId,
+                Status = "available",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
 
-                var propertyId = await _idGenerator.GenerateIdAsync("properties");
+            _context.Properties.Add(property);
+            await _context.SaveChangesAsync();
 
-                var property = new Property
+            if (dto.Images != null)
+            {
+                foreach (var url in dto.Images)
                 {
-                    PropertyId = propertyId,
-                    Title = dto.Title,
-                    Description = dto.Description,
-                    Location = dto.Location,
-                    Price = dto.Price,
-                    OwnerId = dto.OwnerId,
-                    Status = "available",
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
-
-                _context.Properties.Add(property);
-                await _context.SaveChangesAsync();
-
-                if (dto.Images != null)
-                {
-                    foreach (var url in dto.Images)
+                    _context.PropertyImages.Add(new PropertyImage
                     {
-                        _context.PropertyImages.Add(new PropertyImage
-                        {
-                            PropertyId = propertyId,
-                            ImageUrl = url
-                        });
-                    }
-                    await _context.SaveChangesAsync();
+                        PropertyId = propertyId,
+                        ImageUrl = url
+                    });
                 }
+                await _context.SaveChangesAsync();
+            }
 
-                return CreatedAtAction("GetProperty", new { id = property.PropertyId }, property);
-            }
-            catch (DbUpdateException dbEx)
-            {
-                var innerMessage = dbEx.InnerException?.Message ?? "No inner exception";
-                return StatusCode(500, new
-                {
-                    message = "Database update error",
-                    error = dbEx.Message,
-                    inner = innerMessage
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = "Unexpected server error",
-                    error = ex.Message,
-                    stack = ex.StackTrace
-                });
-            }
+            return CreatedAtAction("GetProperty", new { id = property.PropertyId }, property);
         }
 
 
@@ -186,7 +206,13 @@ namespace PropertyGalla.Controllers
 
             property.Title = dto.Title;
             property.Description = dto.Description;
-            property.Location = dto.Location;
+            property.Rooms = dto.Rooms;
+            property.Bathrooms = dto.Bathrooms;
+            property.Parking = dto.Parking;
+            property.Area = dto.Area;
+            property.State = dto.State;
+            property.City = dto.City;
+            property.Neighborhood = dto.Neighborhood;
             property.Price = dto.Price;
             property.OwnerId = dto.OwnerId;
             property.UpdatedAt = DateTime.Now;
@@ -222,9 +248,5 @@ namespace PropertyGalla.Controllers
             return NoContent();
         }
 
-        private bool PropertyExists(string id)
-        {
-            return _context.Properties.Any(e => e.PropertyId == id);
-        }
     }
 }
