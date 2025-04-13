@@ -124,7 +124,13 @@ namespace PropertyGalla.Data
                     OwnerId = users[0].UserId,
                     Title = "Cozy Studio in Cyberjaya",
                     Description = "A modern and cozy studio apartment with great amenities.",
-                    Location = "Cyberjaya",
+                    Rooms = 1,
+                    Bathrooms = 1,
+                    Parking = 2,
+                    Area = 450,
+                    State = "Selangor",
+                    City = "Cyberjaya",
+                    Neighborhood = "Central Park",
                     Price = 1200,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-25),
@@ -136,7 +142,13 @@ namespace PropertyGalla.Data
                     OwnerId = users[3].UserId,
                     Title = "Luxury Condo with Pool View",
                     Description = "Spacious 3-bedroom condo with amazing pool and city views.",
-                    Location = "Kuala Lumpur City Center",
+                    Rooms = 1,
+                    Bathrooms = 1,
+                    Parking = 2,
+                    Area = 450,
+                    State = "Selangor",
+                    City = "Cyberjaya",
+                    Neighborhood = "Central Park",
                     Price = 3500,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-20),
@@ -148,7 +160,13 @@ namespace PropertyGalla.Data
                     OwnerId = users[5].UserId,
                     Title = "Modern Townhouse in Subang",
                     Description = "Newly renovated townhouse with private garden.",
-                    Location = "Subang Jaya",
+                    Rooms = 1,
+                    Bathrooms = 1,
+                    Parking = 3,
+                    Area = 450,
+                    State = "Selangor",
+                    City = "Cyberjaya",
+                    Neighborhood = "Central Park",
                     Price = 2200,
                     Status = "rented",
                     CreatedAt = DateTime.Now.AddDays(-18),
@@ -160,7 +178,13 @@ namespace PropertyGalla.Data
                     OwnerId = users[0].UserId,
                     Title = "Affordable Apartment for Students",
                     Description = "Perfect for students with nearby universities and amenities.",
-                    Location = "Putrajaya",
+                    Rooms = 1,
+                    Bathrooms = 1,
+                    Parking = 1,
+                    Area = 450,
+                    State = "Selangor",
+                    City = "Cyberjaya",
+                    Neighborhood = "Central Park",
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-15),
                     UpdatedAt = DateTime.Now.AddDays(-2)
@@ -171,7 +195,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[3].UserId,
                     Title = "Penthouse with Panoramic Views",
                     Description = "Luxurious penthouse with 360-degree city views.",
-                    Location = "Mont Kiara",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 5000,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-12),
@@ -183,7 +207,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[5].UserId,
                     Title = "Cozy Bungalow by the Lake",
                     Description = "Peaceful bungalow with private access to the lake.",
-                    Location = "Puchong",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 2800,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-10),
@@ -195,7 +219,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[8].UserId,
                     Title = "Modern Studio Near MRT",
                     Description = "Fully furnished studio with easy access to public transport.",
-                    Location = "Bangsar",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 1500,
                     Status = "rented",
                     CreatedAt = DateTime.Now.AddDays(-8),
@@ -207,7 +231,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[0].UserId,
                     Title = "Family-Friendly Condo",
                     Description = "Great for families with playground and swimming pool.",
-                    Location = "Cheras",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 1800,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-7),
@@ -219,7 +243,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[3].UserId,
                     Title = "Luxury Villa with Private Pool",
                     Description = "Exclusive villa with private pool and garden.",
-                    Location = "Damansara Heights",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 4200,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-6),
@@ -231,7 +255,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[5].UserId,
                     Title = "Affordable Room for Rent",
                     Description = "Single room in shared apartment with utilities included.",
-                    Location = "Setapak",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 600,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-5),
@@ -243,7 +267,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[8].UserId,
                     Title = "Commercial Space for Office",
                     Description = "Prime location commercial space suitable for offices.",
-                    Location = "KL Sentral",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 5000,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-4),
@@ -255,7 +279,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[0].UserId,
                     Title = "Waterfront Apartment",
                     Description = "Beautiful apartment with direct waterfront access.",
-                    Location = "Penang",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 2300,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-3),
@@ -267,7 +291,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[3].UserId,
                     Title = "Heritage House for Rent",
                     Description = "Charming heritage house with original features.",
-                    Location = "Melaka",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 1900,
                     Status = "available",
                     CreatedAt = DateTime.Now.AddDays(-2),
@@ -279,7 +303,7 @@ namespace PropertyGalla.Data
                     OwnerId = users[5].UserId,
                     Title = "Serviced Apartment Monthly Rental",
                     Description = "Fully serviced apartment with weekly cleaning included.",
-                    Location = "Bukit Bintang",
+                    Rooms = 1, Bathrooms = 1, Parking = 2, Area = 450, State = "Selangor", City = "Cyberjaya", Neighborhood = "Central Park",
                     Price = 3200,
                     Status = "rented",
                     CreatedAt = DateTime.Now.AddDays(-1),
@@ -291,7 +315,13 @@ namespace PropertyGalla.Data
                     OwnerId = users[8].UserId,
                     Title = "Gated Community House",
                     Description = "Secure gated community with 24/7 security.",
-                    Location = "Petaling Jaya",
+                    Rooms = 1,
+                    Bathrooms = 1,
+                    Parking = 2,
+                    Area = 450,
+                    State = "Selangor",
+                    City = "Cyberjaya",
+                    Neighborhood = "Central Park",
                     Price = 3800,
                     Status = "available",
                     CreatedAt = DateTime.Now,
@@ -563,235 +593,6 @@ namespace PropertyGalla.Data
                 }
             };
 
-            // 5. ContactMessages (25 messages)
-            var contactMessages = new[]
-            {
-                new ContactMessage
-                {
-                    MessageId = "MSG0001",
-                    SenderId = users[1].UserId,
-                    ReceiverId = users[0].UserId,
-                    PropertyId = properties[0].PropertyId,
-                    Message = "Is this apartment still available?",
-                    SentAt = DateTime.Now.AddDays(-10)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0002",
-                    SenderId = users[0].UserId,
-                    ReceiverId = users[1].UserId,
-                    PropertyId = properties[0].PropertyId,
-                    Message = "Yes, it's still available. Would you like to schedule a viewing?",
-                    SentAt = DateTime.Now.AddDays(-9)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0003",
-                    SenderId = users[1].UserId,
-                    ReceiverId = users[0].UserId,
-                    PropertyId = properties[0].PropertyId,
-                    Message = "Yes, please. What times are available this weekend?",
-                    SentAt = DateTime.Now.AddDays(-9)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0004",
-                    SenderId = users[2].UserId,
-                    ReceiverId = users[3].UserId,
-                    PropertyId = properties[1].PropertyId,
-                    Message = "Is the price negotiable for the luxury condo?",
-                    SentAt = DateTime.Now.AddDays(-8)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0005",
-                    SenderId = users[3].UserId,
-                    ReceiverId = users[2].UserId,
-                    PropertyId = properties[1].PropertyId,
-                    Message = "The price is fixed, but we can discuss the terms.",
-                    SentAt = DateTime.Now.AddDays(-8)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0006",
-                    SenderId = users[4].UserId,
-                    ReceiverId = users[5].UserId,
-                    PropertyId = properties[2].PropertyId,
-                    Message = "What's the minimum lease term for the townhouse?",
-                    SentAt = DateTime.Now.AddDays(-7)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0007",
-                    SenderId = users[5].UserId,
-                    ReceiverId = users[4].UserId,
-                    PropertyId = properties[2].PropertyId,
-                    Message = "Minimum lease is 12 months.",
-                    SentAt = DateTime.Now.AddDays(-7)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0008",
-                    SenderId = users[6].UserId,
-                    ReceiverId = users[0].UserId,
-                    PropertyId = properties[3].PropertyId,
-                    Message = "Are utilities included in the rent for the student apartment?",
-                    SentAt = DateTime.Now.AddDays(-6)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0009",
-                    SenderId = users[0].UserId,
-                    ReceiverId = users[6].UserId,
-                    PropertyId = properties[3].PropertyId,
-                    Message = "Water is included, but electricity is separate.",
-                    SentAt = DateTime.Now.AddDays(-6)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0010",
-                    SenderId = users[7].UserId,
-                    ReceiverId = users[3].UserId,
-                    PropertyId = properties[4].PropertyId,
-                    Message = "Is parking included with the penthouse?",
-                    SentAt = DateTime.Now.AddDays(-5)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0011",
-                    SenderId = users[3].UserId,
-                    ReceiverId = users[7].UserId,
-                    PropertyId = properties[4].PropertyId,
-                    Message = "Yes, two parking spaces are included.",
-                    SentAt = DateTime.Now.AddDays(-5)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0012",
-                    SenderId = users[8].UserId,
-                    ReceiverId = users[5].UserId,
-                    PropertyId = properties[5].PropertyId,
-                    Message = "Is the bungalow pet-friendly?",
-                    SentAt = DateTime.Now.AddDays(-4)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0013",
-                    SenderId = users[5].UserId,
-                    ReceiverId = users[8].UserId,
-                    PropertyId = properties[5].PropertyId,
-                    Message = "Small pets are allowed with additional deposit.",
-                    SentAt = DateTime.Now.AddDays(-4)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0014",
-                    SenderId = users[9].UserId,
-                    ReceiverId = users[8].UserId,
-                    PropertyId = properties[6].PropertyId,
-                    Message = "What's the exact distance to the MRT station?",
-                    SentAt = DateTime.Now.AddDays(-3)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0015",
-                    SenderId = users[8].UserId,
-                    ReceiverId = users[9].UserId,
-                    PropertyId = properties[6].PropertyId,
-                    Message = "It's a 5-minute walk to the station.",
-                    SentAt = DateTime.Now.AddDays(-3)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0016",
-                    SenderId = users[1].UserId,
-                    ReceiverId = users[0].UserId,
-                    PropertyId = properties[7].PropertyId,
-                    Message = "Are there good schools nearby the family condo?",
-                    SentAt = DateTime.Now.AddDays(-2)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0017",
-                    SenderId = users[0].UserId,
-                    ReceiverId = users[1].UserId,
-                    PropertyId = properties[7].PropertyId,
-                    Message = "Yes, there are three international schools within 2km.",
-                    SentAt = DateTime.Now.AddDays(-2)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0018",
-                    SenderId = users[2].UserId,
-                    ReceiverId = users[3].UserId,
-                    PropertyId = properties[8].PropertyId,
-                    Message = "Is the villa available for short-term rental?",
-                    SentAt = DateTime.Now.AddDays(-1)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0019",
-                    SenderId = users[3].UserId,
-                    ReceiverId = users[2].UserId,
-                    PropertyId = properties[8].PropertyId,
-                    Message = "Minimum rental period is 6 months.",
-                    SentAt = DateTime.Now.AddDays(-1)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0020",
-                    SenderId = users[4].UserId,
-                    ReceiverId = users[5].UserId,
-                    PropertyId = properties[9].PropertyId,
-                    Message = "Is the room still available? I can move in immediately.",
-                    SentAt = DateTime.Now
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0021",
-                    SenderId = users[5].UserId,
-                    ReceiverId = users[4].UserId,
-                    PropertyId = properties[9].PropertyId,
-                    Message = "Yes, it's available. When would you like to view it?",
-                    SentAt = DateTime.Now
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0022",
-                    SenderId = users[6].UserId,
-                    ReceiverId = users[8].UserId,
-                    PropertyId = properties[10].PropertyId,
-                    Message = "Is the commercial space suitable for a restaurant?",
-                    SentAt = DateTime.Now.AddDays(-2)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0023",
-                    SenderId = users[7].UserId,
-                    ReceiverId = users[0].UserId,
-                    PropertyId = properties[11].PropertyId,
-                    Message = "What's the maintenance fee for the waterfront apartment?",
-                    SentAt = DateTime.Now.AddDays(-1)
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0024",
-                    SenderId = users[8].UserId,
-                    ReceiverId = users[3].UserId,
-                    PropertyId = properties[12].PropertyId,
-                    Message = "Is the heritage house fully furnished?",
-                    SentAt = DateTime.Now
-                },
-                new ContactMessage
-                {
-                    MessageId = "MSG0025",
-                    SenderId = users[9].UserId,
-                    ReceiverId = users[5].UserId,
-                    PropertyId = properties[13].PropertyId,
-                    Message = "What amenities are included in the serviced apartment?",
-                }
-            };
-
             // 6. Feedback (10 feedbacks)
             var feedbacks = new[]
             {
@@ -1041,7 +842,6 @@ namespace PropertyGalla.Data
             context.Properties.AddRange(properties);
             context.PropertyImages.AddRange(propertyImages);
             context.ViewRequests.AddRange(viewRequests);
-            context.ContactMessages.AddRange(contactMessages);
             context.Reports.AddRange(reports);
             context.SavedProperties.AddRange(savedProperties);
 
@@ -1053,4 +853,3 @@ namespace PropertyGalla.Data
 };
 
 
-            

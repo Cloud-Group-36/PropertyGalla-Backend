@@ -34,9 +34,6 @@ namespace PropertyGalla.Services
                 case "viewrequests":
                     nextNumber = await GetNextNumber(_context.ViewRequests.OrderByDescending(r => r.ViewRequestId), prefix);
                     break;
-                case "contactmessages":
-                    nextNumber = await GetNextNumber(_context.ContactMessages.OrderByDescending(m => m.MessageId), prefix);
-                    break;
                 case "feedback":
                     nextNumber = await GetNextNumber(_context.Feedbacks.OrderByDescending(f => f.FeedbackId), prefix);
                     break;
@@ -81,7 +78,6 @@ namespace PropertyGalla.Services
                 "users" => await _context.Users.AnyAsync(u => u.UserId == id),
                 "properties" => await _context.Properties.AnyAsync(p => p.PropertyId == id),
                 "viewrequests" => await _context.ViewRequests.AnyAsync(r => r.ViewRequestId == id),
-                "contactmessages" => await _context.ContactMessages.AnyAsync(m => m.MessageId == id),
                 "feedback" => await _context.Feedbacks.AnyAsync(f => f.FeedbackId == id),
                 "reports" => await _context.Reports.AnyAsync(r => r.ReportId == id),
                 _ => throw new ArgumentException("Unknown table")
@@ -96,7 +92,6 @@ namespace PropertyGalla.Services
                 "properties" => "PRO",
                 "usercart" => "CRT",
                 "viewrequests" => "VRQ",
-                "contactmessages" => "MSG",
                 "feedback" => "FED",
                 "reports" => "REP",
                 _ => null

@@ -16,7 +16,6 @@ namespace PropertyGalla.Data
         public DbSet<PropertyImage> PropertyImages { get; set; }
         public DbSet<ViewRequest> ViewRequests { get; set; }
 
-        public DbSet<ContactMessage> ContactMessages { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<SavedProperty> SavedProperties { get; set; }
@@ -53,24 +52,6 @@ namespace PropertyGalla.Data
                 .HasForeignKey(v => v.PropertyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // ContactMessage → Sender, Receiver, Property
-            modelBuilder.Entity<ContactMessage>()
-                .HasOne(m => m.Sender)
-                .WithMany(u => u.SentMessages)
-                .HasForeignKey(m => m.SenderId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ContactMessage>()
-                .HasOne(m => m.Receiver)
-                .WithMany(u => u.ReceivedMessages)
-                .HasForeignKey(m => m.ReceiverId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ContactMessage>()
-                .HasOne(m => m.Property)
-                .WithMany()
-                .HasForeignKey(m => m.PropertyId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // Feedback → Reviewer & Owner
             modelBuilder.Entity<Feedback>()

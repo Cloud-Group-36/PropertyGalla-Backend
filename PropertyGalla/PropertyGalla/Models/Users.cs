@@ -42,12 +42,6 @@ namespace PropertyGalla.Models
 
         public ICollection<ViewRequest> ViewRequests { get; set; }
 
-        [InverseProperty("Sender")]
-        public ICollection<ContactMessage> SentMessages { get; set; }
-
-        [InverseProperty("Receiver")]
-        public ICollection<ContactMessage> ReceivedMessages { get; set; }
-
         public ICollection<Report> SubmittedReports { get; set; }
 
         public ICollection<SavedProperty> SavedProperties { get; set; }
