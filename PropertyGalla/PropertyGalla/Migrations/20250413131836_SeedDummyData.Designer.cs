@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PropertyGalla.Data;
 
@@ -11,9 +12,11 @@ using PropertyGalla.Data;
 namespace PropertyGalla.Migrations
 {
     [DbContext(typeof(PropertyGallaContext))]
-    partial class PropertyGallaContextModelSnapshot : ModelSnapshot
+    [Migration("20250413131836_SeedDummyData")]
+    partial class SeedDummyData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

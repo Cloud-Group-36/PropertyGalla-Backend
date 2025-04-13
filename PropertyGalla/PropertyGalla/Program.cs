@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PropertyGalla.Data;
+using PropertyGalla.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +19,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
     {
         policy
-            .AllowAnyOrigin()         // You can replace this with .WithOrigins("http://localhost:5500") if you want to restrict
+            .AllowAnyOrigin()         // Change to .WithOrigins("http://localhost:5500") to restrict
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -40,5 +41,12 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+//// ✅ Seed Dummy Data on first run (if DB is empty)
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
+//    DummySeeder.Seed(db);
+//}
 
 app.Run();
