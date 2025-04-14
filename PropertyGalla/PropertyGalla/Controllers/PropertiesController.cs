@@ -95,33 +95,50 @@ namespace PropertyGalla.Controllers
 
         // 🟢 PUBLIC GET: /api/Properties/PRO0001
         [HttpGet("{id}")]
-        [HttpGet("{id}")]
         public async Task<ActionResult<GetPropertyDto>> GetProperty(string id)
         {
-            var property = await _context.Properties
-                .Include(p => p.Images)
-                .FirstOrDefaultAsync(p => p.PropertyId == id);
-
-            if (property == null) return NotFound();
-
-            return new GetPropertyDto
+            try
             {
-                PropertyId = property.PropertyId,
-                Title = property.Title,
-                Description = property.Description,
-                Rooms = property.Rooms,
-                Bathrooms = property.Bathrooms,
-                Parking = property.Parking,
-                Area = property.Area,
-                State = property.State,
-                City = property.City,
-                Neighborhood = property.Neighborhood,
-                Price = property.Price,
-                OwnerId = property.OwnerId,
-                Status = property.Status,
-                Images = property.Images.Select(i => $"/api/Properties/image/{i.Id}").ToList()
-            };
+                var property = await _context.Properties
+                    .Include(p => p.Images)
+                    .FirstOrDefaultAsync(p => p.PropertyId == id);
+
+                if (property == null)
+                    return NotFound(new { message = $"Property with ID {id} not found." });
+
+                return new GetPropertyDto
+                {
+                    PropertyId = property.PropertyId,
+                    Title = property.Title,
+                    Description = property.Description,
+                    Rooms = property.Rooms,
+                    Bathrooms = property.Bathrooms,
+                    Parking = property.Parking,
+                    Area = property.Area,
+                    State = property.State,
+                    City = property.City,
+                    Neighborhood = property.Neighborhood,
+                    Price = property.Price,
+                    OwnerId = property.OwnerId,
+                    Status = property.Status,
+                    Images = property.Images.Select(i => $"/api/Properties/image/{i.Id}").ToList()
+                };
+            }
+            catch (Exception ex)
+            {
+                // 👇 Debug log to console and return proper CORS-friendly error
+                Console.WriteLine($"[ERROR GET /properties/{id}] {ex.Message}");
+
+                HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                return StatusCode(500, new
+                {
+                    message = "❌ Server error while retrieving property.",
+                    error = ex.Message,
+                    inner = ex.InnerException?.Message
+                });
+            }
         }
+
 
         [HttpGet("image/{imageId}")]
         public async Task<IActionResult> GetImage(int imageId)
@@ -183,18 +200,21 @@ namespace PropertyGalla.Controllers
 
 
         // 🔐 PUT: Only property owner can update
-        [HttpPut("{id}")]
+        // PUT: /api/Properties/{id}
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> PutProperty(string id, [FromForm] UpdatePropertyDto dto)
         {
-            if (id != dto.PropertyId) return BadRequest("Property ID mismatch");
+            if (id != dto.PropertyId)
+                return BadRequest("Property ID mismatch.");
 
             var property = await _context.Properties.Include(p => p.Images).FirstOrDefaultAsync(p => p.PropertyId == id);
-            if (property == null) return NotFound();
+            if (property == null)
+                return NotFound();
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (property.OwnerId != currentUserId) return Forbid("Only the owner can update this property.");
+            if (property.OwnerId != currentUserId)
+                return Forbid("Only the owner can update this property.");
 
             property.Title = dto.Title;
             property.Description = dto.Description;
@@ -208,9 +228,19 @@ namespace PropertyGalla.Controllers
             property.Price = dto.Price;
             property.UpdatedAt = DateTime.Now;
 
-            _context.PropertyImages.RemoveRange(property.Images);
+            // Handle image deletions
+            var removeImageUrls = dto.RemoveImageUrls ?? new List<string>();
+            var idsToRemove = removeImageUrls
+                .Select(url => int.TryParse(url.Split("/").Last(), out var id) ? id : (int?)null)
+                .Where(id => id.HasValue)
+                .Select(id => id.Value)
+                .ToList();
 
-            if (dto.Images != null)
+            var toDelete = property.Images.Where(i => idsToRemove.Contains(i.Id)).ToList();
+            _context.PropertyImages.RemoveRange(toDelete);
+
+            // Handle new image uploads
+            if (dto.Images != null && dto.Images.Any())
             {
                 foreach (var file in dto.Images)
                 {
@@ -225,9 +255,17 @@ namespace PropertyGalla.Controllers
                 }
             }
 
+            // Make sure at least one image remains
+            var remainingImageCount = property.Images.Count - toDelete.Count + (dto.Images?.Count ?? 0);
+            if (remainingImageCount == 0)
+            {
+                return BadRequest(new { message = "At least one image must remain after update." });
+            }
+
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
 
         // 🔐 DELETE: Only owner or admin
         [HttpDelete("{id}")]

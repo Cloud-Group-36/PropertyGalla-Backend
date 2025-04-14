@@ -61,21 +61,32 @@ var app = builder.Build();
 // ✅ Middleware
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCors("AllowAll"); // ✅ This must come BEFORE authentication and authorization
 app.UseRouting();
-app.UseCors("AllowAll");
 
-app.UseAuthentication();  // ✅ Enable Authentication
+
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers(); // If you use minimal APIs
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // ✅ Seed Dummy Data
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
-    DummySeeder.Seed(db);
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
+//    DummySeeder.Seed(db);
+//}
 
 app.Run();
