@@ -123,9 +123,13 @@ namespace PropertyGalla.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ContentType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("PropertyId")
                         .IsRequired()
@@ -169,7 +173,8 @@ namespace PropertyGalla.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.HasIndex("ReporterId");
+                    b.HasIndex("ReporterId", "PropertyId")
+                        .IsUnique();
 
                     b.ToTable("Reports");
                 });

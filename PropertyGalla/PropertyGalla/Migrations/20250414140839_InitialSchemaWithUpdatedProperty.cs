@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PropertyGalla.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSchema : Migration
+    public partial class InitialSchemaWithUpdatedProperty : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -94,7 +94,8 @@ namespace PropertyGalla.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PropertyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -217,9 +218,10 @@ namespace PropertyGalla.Migrations
                 column: "PropertyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reports_ReporterId",
+                name: "IX_Reports_ReporterId_PropertyId",
                 table: "Reports",
-                column: "ReporterId");
+                columns: new[] { "ReporterId", "PropertyId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SavedProperties_PropertyId",

@@ -11,14 +11,17 @@ namespace PropertyGalla.Models
         public int Id { get; set; }
 
         [Required]
-        public string PropertyId { get; set; }  // FK → Properties.PropertyId
+        public string PropertyId { get; set; }
 
         [Required]
-        public string ImageUrl { get; set; }
+        public byte[] ImageData { get; set; }  // 🟢 Store image binary
 
-        // ✅ Prevent JSON infinite loop
+        [Required]
+        public string ContentType { get; set; }  // 🟢 Store image MIME type (e.g., image/jpeg)
+
         [JsonIgnore]
         [ForeignKey("PropertyId")]
         public Property Property { get; set; }
     }
+
 }

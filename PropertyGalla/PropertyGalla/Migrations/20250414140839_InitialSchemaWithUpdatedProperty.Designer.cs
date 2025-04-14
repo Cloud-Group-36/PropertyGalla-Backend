@@ -12,8 +12,8 @@ using PropertyGalla.Data;
 namespace PropertyGalla.Migrations
 {
     [DbContext(typeof(PropertyGallaContext))]
-    [Migration("20250413232210_InitialSchema")]
-    partial class InitialSchema
+    [Migration("20250414140839_InitialSchemaWithUpdatedProperty")]
+    partial class InitialSchemaWithUpdatedProperty
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -126,9 +126,13 @@ namespace PropertyGalla.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ContentType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("PropertyId")
                         .IsRequired()
@@ -172,7 +176,8 @@ namespace PropertyGalla.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.HasIndex("ReporterId");
+                    b.HasIndex("ReporterId", "PropertyId")
+                        .IsUnique();
 
                     b.ToTable("Reports");
                 });

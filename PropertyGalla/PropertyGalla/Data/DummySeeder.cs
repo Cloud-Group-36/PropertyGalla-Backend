@@ -329,83 +329,87 @@ namespace PropertyGalla.Data
                 }
             };
 
+            var dummyImageBytes = Convert.FromBase64String(
+                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAEElEQVR42mP8/5+hHgAHggJ/PqnO3gAAAABJRU5ErkJggg==");
+
+
             // 3. PropertyImages (3-5 images per property)
             var propertyImages = new[]
             {
                 // Property 1 images
-                new PropertyImage { PropertyId = properties[0].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Cozy+Studio+1" },
-                new PropertyImage { PropertyId = properties[0].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Cozy+Studio+2" },
-                new PropertyImage { PropertyId = properties[0].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Cozy+Studio+3" },
+                new PropertyImage { PropertyId = properties[0].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png"  },
+                new PropertyImage { PropertyId = properties[0].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[0].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 2 images
-                new PropertyImage { PropertyId = properties[1].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Luxury+Condo+1" },
-                new PropertyImage { PropertyId = properties[1].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Luxury+Condo+2" },
-                new PropertyImage { PropertyId = properties[1].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Luxury+Condo+3" },
-                new PropertyImage { PropertyId = properties[1].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Luxury+Condo+4" },
+                new PropertyImage { PropertyId = properties[1].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[1].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[1].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[1].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 3 images
-                new PropertyImage { PropertyId = properties[2].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Townhouse+1" },
-                new PropertyImage { PropertyId = properties[2].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Townhouse+2" },
+                new PropertyImage { PropertyId = properties[2].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[2].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 4 images
-                new PropertyImage { PropertyId = properties[3].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Student+Apartment+1" },
-                new PropertyImage { PropertyId = properties[3].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Student+Apartment+2" },
-                new PropertyImage { PropertyId = properties[3].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Student+Apartment+3" },
+                new PropertyImage { PropertyId = properties[3].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[3].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[3].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 5 images
-                new PropertyImage { PropertyId = properties[4].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Penthouse+1" },
-                new PropertyImage { PropertyId = properties[4].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Penthouse+2" },
-                new PropertyImage { PropertyId = properties[4].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Penthouse+3" },
-                new PropertyImage { PropertyId = properties[4].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Penthouse+4" },
-                new PropertyImage { PropertyId = properties[4].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Penthouse+5" },
-
+                new PropertyImage { PropertyId = properties[4].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[4].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[4].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[4].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[4].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                    
                 // Property 6 images
-                new PropertyImage { PropertyId = properties[5].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Bungalow+1" },
-                new PropertyImage { PropertyId = properties[5].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Bungalow+2" },
-                new PropertyImage { PropertyId = properties[5].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Bungalow+3" },
+                new PropertyImage { PropertyId = properties[5].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[5].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[5].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 7 images
-                new PropertyImage { PropertyId = properties[6].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Studio+Near+MRT+1" },
-                new PropertyImage { PropertyId = properties[6].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Studio+Near+MRT+2" },
+                new PropertyImage { PropertyId = properties[6].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[6].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 8 images
-                new PropertyImage { PropertyId = properties[7].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Family+Condo+1" },
-                new PropertyImage { PropertyId = properties[7].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Family+Condo+2" },
-                new PropertyImage { PropertyId = properties[7].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Family+Condo+3" },
+                new PropertyImage { PropertyId = properties[7].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png    " },
+                new PropertyImage { PropertyId = properties[7].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png    " },
+                new PropertyImage { PropertyId = properties[7].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png    " },
 
                 // Property 9 images
-                new PropertyImage { PropertyId = properties[8].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Luxury+Villa+1" },
-                new PropertyImage { PropertyId = properties[8].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Luxury+Villa+2" },
-                new PropertyImage { PropertyId = properties[8].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Luxury+Villa+3" },
-                new PropertyImage { PropertyId = properties[8].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Luxury+Villa+4" },
+                new PropertyImage { PropertyId = properties[8].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[8].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[8].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[8].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 10 images
-                new PropertyImage { PropertyId = properties[9].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Affordable+Room+1" },
+                new PropertyImage { PropertyId = properties[9].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 11 images
-                new PropertyImage { PropertyId = properties[10].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Commercial+Space+1" },
-                new PropertyImage { PropertyId = properties[10].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Commercial+Space+2" },
-                new PropertyImage { PropertyId = properties[10].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Commercial+Space+3" },
+                new PropertyImage { PropertyId = properties[10].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[10].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[10].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png   " },
 
                 // Property 12 images
-                new PropertyImage { PropertyId = properties[11].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Waterfront+1" },
-                new PropertyImage { PropertyId = properties[11].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Waterfront+2" },
+                new PropertyImage { PropertyId = properties[11].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[11].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 13 images
-                new PropertyImage { PropertyId = properties[12].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Heritage+House+1" },
-                new PropertyImage { PropertyId = properties[12].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Heritage+House+2" },
-                new PropertyImage { PropertyId = properties[12].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Heritage+House+3" },
-                new PropertyImage { PropertyId = properties[12].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Heritage+House+4" },
+                new PropertyImage { PropertyId = properties[12].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[12].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[12].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[12].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 14 images
-                new PropertyImage { PropertyId = properties[13].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Serviced+Apartment+1" },
-                new PropertyImage { PropertyId = properties[13].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Serviced+Apartment+2" },
+                new PropertyImage { PropertyId = properties[13].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[13].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
 
                 // Property 15 images
-                new PropertyImage { PropertyId = properties[14].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Gated+House+1" },
-                new PropertyImage { PropertyId = properties[14].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Gated+House+2" },
-                new PropertyImage { PropertyId = properties[14].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Gated+House+3" },
-                new PropertyImage { PropertyId = properties[14].PropertyId, ImageUrl = "https://via.placeholder.com/600x400?text=Gated+House+4" }
+                new PropertyImage { PropertyId = properties[14].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[14].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[14].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" },
+                new PropertyImage { PropertyId = properties[14].PropertyId, ImageData = dummyImageBytes, ContentType = "image/png" }
             };
 
             // 4. ViewRequests (20 requests)

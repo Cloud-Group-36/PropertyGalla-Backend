@@ -72,10 +72,10 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // ✅ Seed Dummy Data
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
-//    DummySeeder.Seed(db);
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
+    DummySeeder.Seed(db);
+}
 
 app.Run();
