@@ -23,6 +23,7 @@ namespace PropertyGalla.Controllers
         }
 
         // 🟢 PUBLIC GET: /api/Properties?filters...
+        // 🟢 PUBLIC GET: /api/Properties?filters...
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetPropertyDto>>> GetProperties(
             [FromQuery] string? title = null,
@@ -88,11 +89,12 @@ namespace PropertyGalla.Controllers
                 Price = p.Price,
                 OwnerId = p.OwnerId,
                 Status = p.Status,
-                Images = p.Images.Select(i => i.ImageUrl).ToList()
+                Images = p.Images.Select(i => $"/api/Properties/image/{i.Id}").ToList()
             }).ToList();
         }
 
         // 🟢 PUBLIC GET: /api/Properties/PRO0001
+        [HttpGet("{id}")]
         [HttpGet("{id}")]
         public async Task<ActionResult<GetPropertyDto>> GetProperty(string id)
         {
@@ -100,8 +102,7 @@ namespace PropertyGalla.Controllers
                 .Include(p => p.Images)
                 .FirstOrDefaultAsync(p => p.PropertyId == id);
 
-            if (property == null)
-                return NotFound();
+            if (property == null) return NotFound();
 
             return new GetPropertyDto
             {
@@ -118,18 +119,24 @@ namespace PropertyGalla.Controllers
                 Price = property.Price,
                 OwnerId = property.OwnerId,
                 Status = property.Status,
-                Images = property.Images.Select(i => i.ImageUrl).ToList()
+                Images = property.Images.Select(i => $"/api/Properties/image/{i.Id}").ToList()
             };
         }
 
-        // 🔐 POST: Authenticated users can create a property
-        [HttpPost]
+        [HttpGet("image/{imageId}")]
+        public async Task<IActionResult> GetImage(int imageId)
+        {
+            var image = await _context.PropertyImages.FindAsync(imageId);
+            if (image == null) return NotFound();
+            return File(image.ImageData, image.ContentType);
+        }
+
+        [HttpPost("with-files")]
         [Authorize]
-        public async Task<ActionResult<Property>> PostProperty(CreatePropertyDto dto)
+        public async Task<ActionResult<Property>> PostPropertyWithFiles([FromForm] CreatePropertyWithFilesDto dto)
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (dto.OwnerId != currentUserId)
-                return Forbid("You can only post properties as yourself.");
+            if (dto.OwnerId != currentUserId) return Forbid("You can only post properties as yourself.");
 
             var propertyId = await _idGenerator.GenerateIdAsync("properties");
 
@@ -157,12 +164,15 @@ namespace PropertyGalla.Controllers
 
             if (dto.Images != null)
             {
-                foreach (var url in dto.Images)
+                foreach (var file in dto.Images)
                 {
+                    using var ms = new MemoryStream();
+                    await file.CopyToAsync(ms);
                     _context.PropertyImages.Add(new PropertyImage
                     {
                         PropertyId = propertyId,
-                        ImageUrl = url
+                        ImageData = ms.ToArray(),
+                        ContentType = file.ContentType
                     });
                 }
                 await _context.SaveChangesAsync();
@@ -171,24 +181,20 @@ namespace PropertyGalla.Controllers
             return CreatedAtAction(nameof(GetProperty), new { id = property.PropertyId }, property);
         }
 
+
         // 🔐 PUT: Only property owner can update
         [HttpPut("{id}")]
+        [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> PutProperty(string id, UpdatePropertyDto dto)
+        public async Task<IActionResult> PutProperty(string id, [FromForm] UpdatePropertyDto dto)
         {
-            if (id != dto.PropertyId)
-                return BadRequest(new { message = "Mismatched property ID." });
+            if (id != dto.PropertyId) return BadRequest("Property ID mismatch");
 
-            var property = await _context.Properties
-                .Include(p => p.Images)
-                .FirstOrDefaultAsync(p => p.PropertyId == id);
-
-            if (property == null)
-                return NotFound();
+            var property = await _context.Properties.Include(p => p.Images).FirstOrDefaultAsync(p => p.PropertyId == id);
+            if (property == null) return NotFound();
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (property.OwnerId != currentUserId)
-                return Forbid("Only the owner can update this property.");
+            if (property.OwnerId != currentUserId) return Forbid("Only the owner can update this property.");
 
             property.Title = dto.Title;
             property.Description = dto.Description;
@@ -206,11 +212,17 @@ namespace PropertyGalla.Controllers
 
             if (dto.Images != null)
             {
-                property.Images = dto.Images.Select(url => new PropertyImage
+                foreach (var file in dto.Images)
                 {
-                    ImageUrl = url,
-                    PropertyId = id
-                }).ToList();
+                    using var ms = new MemoryStream();
+                    await file.CopyToAsync(ms);
+                    _context.PropertyImages.Add(new PropertyImage
+                    {
+                        PropertyId = id,
+                        ImageData = ms.ToArray(),
+                        ContentType = file.ContentType
+                    });
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -223,8 +235,7 @@ namespace PropertyGalla.Controllers
         public async Task<IActionResult> DeleteProperty(string id)
         {
             var property = await _context.Properties.FindAsync(id);
-            if (property == null)
-                return NotFound();
+            if (property == null) return NotFound();
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isAdmin = User.IsInRole("admin");

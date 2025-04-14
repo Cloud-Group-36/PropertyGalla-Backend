@@ -15,7 +15,7 @@
         public decimal Price { get; set; }
         public string OwnerId { get; set; }
         public string Status { get; set; }
-        public List<string> Images { get; set; }
+        public List<string> Images { get; set; } // These are URLs, not IFormFile. IFormFile is for uploads only.
     }
 
 }
