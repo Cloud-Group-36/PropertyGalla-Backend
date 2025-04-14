@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PropertyGalla.Data;
 using PropertyGalla.DTOs.ReportDTOs;
 using PropertyGalla.Models;
 using PropertyGalla.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace PropertyGalla.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReportsController : ControllerBase
     {
         private readonly PropertyGallaContext _context;
@@ -24,7 +23,7 @@ namespace PropertyGalla.Controllers
             _idGenerator = new IdGeneratorService(context);
         }
 
-        // GET: api/Reports
+        // ✅ GET: api/Reports
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetReportDto>>> GetReports(
             [FromQuery] string? reporterId = null,
@@ -35,23 +34,34 @@ namespace PropertyGalla.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 5)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("admin");
+
             var query = _context.Reports
                 .Include(r => r.Reporter)
                 .Include(r => r.Property)
                 .AsQueryable();
 
+            if (!isAdmin)
+            {
+                var ownedPropertyIds = await _context.Properties
+                    .Where(p => p.OwnerId == currentUserId)
+                    .Select(p => p.PropertyId)
+                    .ToListAsync();
+
+                query = query.Where(r =>
+                    r.ReporterId == currentUserId ||
+                    ownedPropertyIds.Contains(r.PropertyId));
+            }
+
             if (!string.IsNullOrEmpty(reporterId))
                 query = query.Where(r => r.ReporterId == reporterId);
-
             if (!string.IsNullOrEmpty(propertyId))
                 query = query.Where(r => r.PropertyId == propertyId);
-
             if (!string.IsNullOrEmpty(status))
                 query = query.Where(r => r.Status == status);
-
             if (startDate.HasValue)
                 query = query.Where(r => r.CreatedAt >= startDate);
-
             if (endDate.HasValue)
                 query = query.Where(r => r.CreatedAt <= endDate);
 
@@ -84,13 +94,22 @@ namespace PropertyGalla.Controllers
             });
         }
 
-        // GET: api/Reports/REP0001
+        // ✅ GET: api/Reports/REP0001
         [HttpGet("{id}")]
         public async Task<ActionResult<GetReportDto>> GetReport(string id)
         {
             var report = await _context.Reports.FindAsync(id);
             if (report == null)
                 return NotFound(new { message = "Report not found" });
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("admin");
+
+            var ownsProperty = await _context.Properties
+                .AnyAsync(p => p.PropertyId == report.PropertyId && p.OwnerId == currentUserId);
+
+            if (!isAdmin && report.ReporterId != currentUserId && !ownsProperty)
+                return Forbid("You can only view your own reports or reports made about your properties.");
 
             return new GetReportDto
             {
@@ -104,20 +123,24 @@ namespace PropertyGalla.Controllers
             };
         }
 
-        // POST: api/Reports
+        // ✅ POST: api/Reports
         [HttpPost]
         public async Task<ActionResult<GetReportDto>> PostReport(CreateReportDto dto)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (currentUserId != dto.ReporterId)
+                return Forbid("You can only report as yourself.");
+
             var reporterExists = await _context.Users.AnyAsync(u => u.UserId == dto.ReporterId);
             var propertyExists = await _context.Properties.AnyAsync(p => p.PropertyId == dto.PropertyId);
 
             if (!reporterExists || !propertyExists)
                 return BadRequest(new { message = "Invalid ReporterId or PropertyId" });
 
-            bool duplicate = await _context.Reports.AnyAsync(r =>
+            var exists = await _context.Reports.AnyAsync(r =>
                 r.ReporterId == dto.ReporterId && r.PropertyId == dto.PropertyId);
 
-            if (duplicate)
+            if (exists)
                 return Conflict(new { message = "You have already reported this property." });
 
             var reportId = await _idGenerator.GenerateIdAsync("reports");
@@ -147,8 +170,9 @@ namespace PropertyGalla.Controllers
             });
         }
 
-        // PUT: api/Reports
+        // ✅ PUT: api/Reports
         [HttpPut]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateReportStatus([FromBody] UpdateReportStatusDto dto)
         {
             if (string.IsNullOrEmpty(dto.ReportId))
@@ -165,8 +189,9 @@ namespace PropertyGalla.Controllers
             return Ok(new { message = "Report status updated" });
         }
 
-        // DELETE: api/Reports/REP0001
+        // ✅ DELETE: api/Reports/REP0001
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteReport(string id)
         {
             var report = await _context.Reports.FindAsync(id);
