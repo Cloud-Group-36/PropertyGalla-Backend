@@ -85,6 +85,11 @@ namespace PropertyGalla.Data
                 .HasForeignKey(r => r.PropertyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Report>()
+                .HasIndex(r => new { r.ReporterId, r.PropertyId })
+                .IsUnique();
+
+
             // SavedProperty → User & Property
             modelBuilder.Entity<SavedProperty>()
                 .HasOne(s => s.User)
