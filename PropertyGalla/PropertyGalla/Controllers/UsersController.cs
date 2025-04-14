@@ -192,7 +192,7 @@ namespace PropertyGalla.Controllers
 
             return Ok(new { message = "User updated successfully" });
         }
-
+        //
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteUser(string id)
