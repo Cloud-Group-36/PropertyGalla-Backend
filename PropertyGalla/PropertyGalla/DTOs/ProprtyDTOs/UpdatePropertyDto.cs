@@ -14,7 +14,11 @@
         public string Neighborhood { get; set; }
         public decimal Price { get; set; }
         public string OwnerId { get; set; }
-        public List<IFormFile> Images { get; set; }
+
+        public List<IFormFile>? Images { get; set; }
+
+        public List<string>? RemoveImageUrls { get; set; }
     }
+
 
 }
