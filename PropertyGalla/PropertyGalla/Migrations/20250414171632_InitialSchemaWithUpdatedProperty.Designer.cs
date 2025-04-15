@@ -12,7 +12,7 @@ using PropertyGalla.Data;
 namespace PropertyGalla.Migrations
 {
     [DbContext(typeof(PropertyGallaContext))]
-    [Migration("20250414140839_InitialSchemaWithUpdatedProperty")]
+    [Migration("20250414171632_InitialSchemaWithUpdatedProperty")]
     partial class InitialSchemaWithUpdatedProperty
     {
         /// <inheritdoc />
