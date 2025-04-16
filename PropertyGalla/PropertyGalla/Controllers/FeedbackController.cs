@@ -25,6 +25,7 @@ namespace PropertyGalla.Controllers
 
         // ✅ GET: api/Feedback (Only logged-in users)
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<GetFeedbackDto>>> GetFeedbacks(
             [FromQuery] string? ownerId = null,
             [FromQuery] string? reviewerId = null,

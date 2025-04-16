@@ -24,7 +24,7 @@ namespace PropertyGalla.Controllers
 
         // 🟢 PUBLIC GET: /api/Properties?filters...
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetPropertyDto>>> GetProperties(
+        public async Task<IActionResult> GetProperties(
             [FromQuery] string? title = null,
             [FromQuery] string? state = null,
             [FromQuery] string? city = null,
@@ -37,13 +37,14 @@ namespace PropertyGalla.Controllers
             [FromQuery] decimal? maxPrice = null,
             [FromQuery] DateTime? startDate = null,
             [FromQuery] DateTime? endDate = null,
-            [FromQuery] int? page = null,
-            [FromQuery] int? pageSize = null)
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 5)
         {
             var query = _context.Properties
                 .Include(p => p.Images)
                 .AsQueryable();
 
+            // 🔍 Filtering
             if (!string.IsNullOrEmpty(title))
                 query = query.Where(p => p.Title.Contains(title));
             if (!string.IsNullOrEmpty(state))
@@ -68,12 +69,19 @@ namespace PropertyGalla.Controllers
                 query = query.Where(p => p.CreatedAt >= startDate);
             if (endDate.HasValue)
                 query = query.Where(p => p.CreatedAt <= endDate);
-            if (page.HasValue && pageSize.HasValue)
-                query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
 
-            var properties = await query.ToListAsync();
+            // 📊 Pagination metadata
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            return properties.Select(p => new GetPropertyDto
+            // 📦 Page results
+            var properties = await query
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var result = properties.Select(p => new GetPropertyDto
             {
                 PropertyId = p.PropertyId,
                 Title = p.Title,
@@ -90,6 +98,15 @@ namespace PropertyGalla.Controllers
                 Status = p.Status,
                 Images = p.Images.Select(i => $"/api/Properties/image/{i.Id}").ToList()
             }).ToList();
+
+            return Ok(new
+            {
+                currentPage = page,
+                totalPages,
+                totalCount,
+                pageSize,
+                properties = result
+            });
         }
 
         // 🟢 PUBLIC GET: /api/Properties/PRO0001
@@ -310,15 +327,31 @@ namespace PropertyGalla.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> DeleteProperty(string id)
         {
-            var property = await _context.Properties.FindAsync(id);
-            if (property == null) return NotFound();
+            var property = await _context.Properties
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.PropertyId == id);
 
-            var images = _context.PropertyImages.Where(i => i.PropertyId == id);
-            _context.PropertyImages.RemoveRange(images);
+            if (property == null)
+                return NotFound(new { message = $"Property with ID {id} not found." });
+
+            // ✅ Remove related SavedProperties
+            var savedEntries = _context.SavedProperties.Where(sp => sp.PropertyId == id);
+            _context.SavedProperties.RemoveRange(savedEntries);
+
+            // ✅ Remove related ViewRequests
+            var viewRequests = _context.ViewRequests.Where(vr => vr.PropertyId == id);
+            _context.ViewRequests.RemoveRange(viewRequests);
+
+            // ✅ Remove PropertyImages
+            _context.PropertyImages.RemoveRange(property.Images);
+
+            // ✅ Remove the property itself
             _context.Properties.Remove(property);
+
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
     }
 }
