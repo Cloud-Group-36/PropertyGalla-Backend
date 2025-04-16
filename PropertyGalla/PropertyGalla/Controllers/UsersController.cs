@@ -192,7 +192,8 @@ namespace PropertyGalla.Controllers
 
             return Ok(new { message = "User updated successfully" });
         }
-        //
+        
+
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteUser(string id)
@@ -201,10 +202,51 @@ namespace PropertyGalla.Controllers
             if (user == null)
                 return NotFound(new { message = "User not found" });
 
+            // 1. Remove feedbacks (given or received)
+            _context.Feedbacks.RemoveRange(
+                _context.Feedbacks.Where(f => f.ReviewerId == id || f.OwnerId == id)
+            );
+
+            // 2. Remove reports submitted by this user
+            _context.Reports.RemoveRange(
+                _context.Reports.Where(r => r.ReporterId == id)
+            );
+
+            // 3. Remove view requests made by this user
+            _context.ViewRequests.RemoveRange(
+                _context.ViewRequests.Where(v => v.UserId == id)
+            );
+
+            // 4. Remove saved properties saved by this user
+            _context.SavedProperties.RemoveRange(
+                _context.SavedProperties.Where(sp => sp.UserId == id)
+            );
+
+            // 5. Remove all properties owned by the user and their dependencies
+            var properties = await _context.Properties
+                .Include(p => p.Images)
+                .Where(p => p.OwnerId == id)
+                .ToListAsync();
+
+            foreach (var property in properties)
+            {
+                var propId = property.PropertyId;
+
+                _context.PropertyImages.RemoveRange(property.Images);
+                _context.ViewRequests.RemoveRange(_context.ViewRequests.Where(v => v.PropertyId == propId));
+                _context.SavedProperties.RemoveRange(_context.SavedProperties.Where(sp => sp.PropertyId == propId));
+                _context.Reports.RemoveRange(_context.Reports.Where(r => r.PropertyId == propId));
+            }
+
+            _context.Properties.RemoveRange(properties);
+
+            // 6. Finally delete the user
             _context.Users.Remove(user);
+
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
     }
 }

@@ -67,6 +67,13 @@ builder.Services.AddScoped<ITokenService, TokenService>(); // You will implement
 
 var app = builder.Build();
 
+// ✅ Seed Dummy Data
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
+    DummySeeder.Seed(db);
+}
+
 // ✅ Middleware
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -91,11 +98,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// ✅ Seed Dummy Data
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
-//    DummySeeder.Seed(db);
-//}
+
 
 app.Run();
