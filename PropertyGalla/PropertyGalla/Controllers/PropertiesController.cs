@@ -23,7 +23,6 @@ namespace PropertyGalla.Controllers
         }
 
         // 🟢 PUBLIC GET: /api/Properties?filters...
-        // 🟢 PUBLIC GET: /api/Properties?filters...
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetPropertyDto>>> GetProperties(
             [FromQuery] string? title = null,
@@ -149,60 +148,102 @@ namespace PropertyGalla.Controllers
         }
 
         [HttpPost("with-files")]
-        [Authorize]
         public async Task<ActionResult<Property>> PostPropertyWithFiles([FromForm] CreatePropertyWithFilesDto dto)
         {
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (dto.OwnerId != currentUserId) return Forbid("You can only post properties as yourself.");
-
-            var propertyId = await _idGenerator.GenerateIdAsync("properties");
-
-            var property = new Property
+            try
             {
-                PropertyId = propertyId,
-                Title = dto.Title,
-                Description = dto.Description,
-                Rooms = dto.Rooms,
-                Bathrooms = dto.Bathrooms,
-                Parking = dto.Parking,
-                Area = dto.Area,
-                State = dto.State,
-                City = dto.City,
-                Neighborhood = dto.Neighborhood,
-                Price = dto.Price,
-                OwnerId = dto.OwnerId,
-                Status = "available",
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            };
-
-            _context.Properties.Add(property);
-            await _context.SaveChangesAsync();
-
-            if (dto.Images != null)
-            {
-                foreach (var file in dto.Images)
+                // ✅ Log headers (including token if sent)
+                Console.WriteLine("[DEBUG] Headers:");
+                foreach (var header in Request.Headers)
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    _context.PropertyImages.Add(new PropertyImage
-                    {
-                        PropertyId = propertyId,
-                        ImageData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    });
+                    Console.WriteLine($"[DEBUG] Header: {header.Key} = {header.Value}");
                 }
-                await _context.SaveChangesAsync();
-            }
 
-            return CreatedAtAction(nameof(GetProperty), new { id = property.PropertyId }, property);
+                // ✅ Log form data
+                Console.WriteLine($"[DEBUG] Incoming Title: {dto.Title}");
+                Console.WriteLine($"[DEBUG] Incoming Description: {dto.Description}");
+                Console.WriteLine($"[DEBUG] Incoming OwnerId: {dto.OwnerId}");
+                Console.WriteLine($"[DEBUG] Incoming State: {dto.State}, City: {dto.City}, Neighborhood: {dto.Neighborhood}");
+                Console.WriteLine($"[DEBUG] Incoming Price: {dto.Price}, Area: {dto.Area}");
+                Console.WriteLine($"[DEBUG] Image Count: {dto.Images?.Count ?? 0}");
+
+                // ✅ Validation
+                if (string.IsNullOrEmpty(dto.OwnerId))
+                {
+                    Console.WriteLine("[ERROR] OwnerId is missing");
+                    return BadRequest(new { message = "OwnerId is required." });
+                }
+
+                // ✅ Generate ID
+                var propertyId = await _idGenerator.GenerateIdAsync("properties");
+
+                // ✅ Create entity
+                var property = new Property
+                {
+                    PropertyId = propertyId,
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    Rooms = dto.Rooms,
+                    Bathrooms = dto.Bathrooms,
+                    Parking = dto.Parking,
+                    Area = dto.Area,
+                    State = dto.State,
+                    City = dto.City,
+                    Neighborhood = dto.Neighborhood,
+                    Price = dto.Price,
+                    OwnerId = dto.OwnerId,
+                    Status = "available",
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
+
+                _context.Properties.Add(property);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("[DEBUG] Property added to DB.");
+
+                // ✅ Add images
+                if (dto.Images != null && dto.Images.Any())
+                {
+                    foreach (var file in dto.Images)
+                    {
+                        using var ms = new MemoryStream();
+                        await file.CopyToAsync(ms);
+                        _context.PropertyImages.Add(new PropertyImage
+                        {
+                            PropertyId = propertyId,
+                            ImageData = ms.ToArray(),
+                            ContentType = file.ContentType
+                        });
+                    }
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("[DEBUG] Images saved.");
+                }
+
+                Console.WriteLine("[DEBUG] Property creation completed successfully.");
+                return CreatedAtAction(nameof(GetProperty), new { id = property.PropertyId }, property);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[ERROR] Exception during property creation:");
+                Console.WriteLine($"[ERROR] {ex.Message}");
+                if (ex.InnerException != null)
+                    Console.WriteLine($"[ERROR] Inner: {ex.InnerException.Message}");
+
+                return StatusCode(500, new
+                {
+                    message = "❌ Server error occurred.",
+                    error = ex.Message,
+                    inner = ex.InnerException?.Message
+                });
+            }
         }
 
 
-        // 🔐 PUT: Only property owner can update
+
+
         // PUT: /api/Properties/{id}
         [HttpPut("{id}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> PutProperty(string id, [FromForm] UpdatePropertyDto dto)
         {
             if (id != dto.PropertyId)
@@ -212,10 +253,7 @@ namespace PropertyGalla.Controllers
             if (property == null)
                 return NotFound();
 
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (property.OwnerId != currentUserId)
-                return Forbid("Only the owner can update this property.");
-
+            // 🚫 No authorization checks
             property.Title = dto.Title;
             property.Description = dto.Description;
             property.Rooms = dto.Rooms;
@@ -228,10 +266,10 @@ namespace PropertyGalla.Controllers
             property.Price = dto.Price;
             property.UpdatedAt = DateTime.Now;
 
-            // Handle image deletions
+            // Handle image removals
             var removeImageUrls = dto.RemoveImageUrls ?? new List<string>();
             var idsToRemove = removeImageUrls
-                .Select(url => int.TryParse(url.Split("/").Last(), out var id) ? id : (int?)null)
+                .Select(url => int.TryParse(url.Split("/").Last(), out var idVal) ? idVal : (int?)null)
                 .Where(id => id.HasValue)
                 .Select(id => id.Value)
                 .ToList();
@@ -239,7 +277,7 @@ namespace PropertyGalla.Controllers
             var toDelete = property.Images.Where(i => idsToRemove.Contains(i.Id)).ToList();
             _context.PropertyImages.RemoveRange(toDelete);
 
-            // Handle new image uploads
+            // Add new images
             if (dto.Images != null && dto.Images.Any())
             {
                 foreach (var file in dto.Images)
@@ -255,7 +293,6 @@ namespace PropertyGalla.Controllers
                 }
             }
 
-            // Make sure at least one image remains
             var remainingImageCount = property.Images.Count - toDelete.Count + (dto.Images?.Count ?? 0);
             if (remainingImageCount == 0)
             {
@@ -267,19 +304,14 @@ namespace PropertyGalla.Controllers
         }
 
 
-        // 🔐 DELETE: Only owner or admin
+
+        // ✅ DELETE: Public (no auth required)
         [HttpDelete("{id}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteProperty(string id)
         {
             var property = await _context.Properties.FindAsync(id);
             if (property == null) return NotFound();
-
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("admin");
-
-            if (property.OwnerId != currentUserId && !isAdmin)
-                return Forbid("Only the owner or admin can delete this property.");
 
             var images = _context.PropertyImages.Where(i => i.PropertyId == id);
             _context.PropertyImages.RemoveRange(images);

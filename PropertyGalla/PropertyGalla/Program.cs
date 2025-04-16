@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PropertyGalla.Data;
 using PropertyGalla.Services;
@@ -30,6 +31,14 @@ builder.Services.AddCors(options =>
 // ✅ Add DbContext
 builder.Services.AddDbContext<PropertyGallaContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//builder.Services.AddDbContext<PropertyGallaContext>(options =>
+//    options.UseSqlServer(
+//        builder.Configuration.GetConnectionString("PropertyGallaContextConnection"),
+//        sql => sql.EnableRetryOnFailure() // 🔁 Adds resiliency
+//    ));
+
+ 
 
 // ✅ Add JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
