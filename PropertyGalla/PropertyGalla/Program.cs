@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ✅ Add DbContext
+//// ✅ Add DbContext
 builder.Services.AddDbContext<PropertyGallaContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -38,7 +38,7 @@ builder.Services.AddDbContext<PropertyGallaContext>(options =>
 //        sql => sql.EnableRetryOnFailure() // 🔁 Adds resiliency
 //    ));
 
- 
+
 
 // ✅ Add JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
@@ -67,12 +67,12 @@ builder.Services.AddScoped<ITokenService, TokenService>(); // You will implement
 
 var app = builder.Build();
 
-// ✅ Seed Dummy Data
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
-    DummySeeder.Seed(db);
-}
+////// ✅ Seed Dummy Data
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
+//    DummySeeder.Seed(db);
+//}
 
 // ✅ Middleware
 app.UseHttpsRedirection();
