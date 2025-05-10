@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PropertyGalla.Data;
 using PropertyGalla.Services;
@@ -9,7 +8,7 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Add services
+// ✅ Add controllers with JSON options
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
     {
@@ -17,10 +16,10 @@ builder.Services.AddControllersWithViews()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
-// ✅ CORS
+// ✅ CORS Policy for Frontend (Localhost or Deploy URL)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("FrontendPolicy", policy =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
@@ -28,19 +27,15 @@ builder.Services.AddCors(options =>
     });
 });
 
-//// ✅ Add DbContext
+
+// ✅ Configure EF Core with resilient SQL connection
 builder.Services.AddDbContext<PropertyGallaContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("PropertyGallaContextConnection"),
+        sql => sql.EnableRetryOnFailure()
+    ));
 
-//builder.Services.AddDbContext<PropertyGallaContext>(options =>
-//    options.UseSqlServer(
-//        builder.Configuration.GetConnectionString("PropertyGallaContextConnection"),
-//        sql => sql.EnableRetryOnFailure() // 🔁 Adds resiliency
-//    ));
-
-
-
-// ✅ Add JWT Authentication
+// ✅ JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 
@@ -62,42 +57,30 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// ✅ Register any custom services (if any, like token service)
-builder.Services.AddScoped<ITokenService, TokenService>(); // You will implement this later
+// ✅ Custom Services
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
-////// ✅ Seed Dummy Data
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<PropertyGallaContext>();
-//    DummySeeder.Seed(db);
-//}
+// ✅ Global Middleware Setup
+app.UseDeveloperExceptionPage(); // Optional, for development
 
-// ✅ Middleware
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseCors("AllowAll"); // ✅ This must come BEFORE authentication and authorization
+
+// ✅ Apply CORS (must come before routing/auth)
+app.UseCors("FrontendPolicy");
+
 app.UseRouting();
 
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers(); // If you use minimal APIs
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-
-app.UseAuthentication();
-app.UseAuthorization();
-
+// ✅ Endpoint Mapping
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-
 
 app.Run();
